@@ -22,6 +22,9 @@ class DraftKingsController {
         return service.getCurrentNBAOverUnders()
     }
 
+
+
+
     @GetMapping("league/nba/moneyline/current")
     fun getCurrentNBAMoneyLine():SportsBookTeamBets{
         return service.getCurrentNBAMoneyLines()
@@ -32,9 +35,29 @@ class DraftKingsController {
         return service.getCurrentNHLSpreads()
     }
 
+    @GetMapping("league/nhl/overunder/current")
+    fun getCurrentNHLOverUnder(): SportsBookTeamBets{
+        return service.getCurrentNHLOverUnders()
+    }
+
+    @GetMapping("league/nhl/moneyline/current")
+    fun getCurrentNHLMoneyLine(): SportsBookTeamBets{
+        return service.getCurrentNHLMoneyLines()
+    }
+
     @GetMapping("league/ncaam/spread/current")
     fun getCurrentNCAAMSpreads():SportsBookTeamBets{
         return service.getCurrentNCAAMSpreads()
+    }
+
+    @GetMapping("league/ncaam/overunder/current")
+    fun getCurrentNCAAMOverUnder():SportsBookTeamBets{
+        return service.getCurrentNCAAMOverUnders()
+    }
+
+    @GetMapping("league/ncaam/moneyline/current")
+    fun getCurrentNCAAMMoneyLine():SportsBookTeamBets{
+        return service.getCurrentNCAAMMoneyLines()
     }
 
 }
