@@ -22,9 +22,6 @@ class DraftKingsController {
         return service.getCurrentNBAOverUnders()
     }
 
-
-
-
     @GetMapping("league/nba/moneyline/current")
     fun getCurrentNBAMoneyLine():SportsBookTeamBets{
         return service.getCurrentNBAMoneyLines()

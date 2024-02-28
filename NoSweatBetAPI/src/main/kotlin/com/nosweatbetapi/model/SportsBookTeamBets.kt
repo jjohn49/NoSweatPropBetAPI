@@ -1,3 +1,3 @@
 package com.nosweatbetapi.model
 
-data class SportsBookTeamBets(val sportsBookName: String = "None", val spreadBets: MutableList<TeamBet>)
+data class SportsBookTeamBets(val sportsBookName: String = "None", val teamBets: MutableList<TeamBet>)
