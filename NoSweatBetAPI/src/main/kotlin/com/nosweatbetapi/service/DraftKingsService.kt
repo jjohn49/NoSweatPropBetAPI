@@ -16,7 +16,9 @@ class DraftKingsService : SportsBookService{
     override val name: String
         get() = "DraftKings"
 
-    val nbaUrl: String = "https://sportsbook.draftkings.com/leagues/basketball/nba"
+    val NBA_URL: String = "https://sportsbook.draftkings.com/leagues/basketball/nba"
+    val NHL_URL: String = "https://sportsbook.draftkings.com/leagues/hockey/nhl"
+    val NCAAM_URL:String = "https://sportsbook.draftkings.com/leagues/basketball/ncaab"
 
     private fun getCurrentBets(url: String, type: TeamBetType): SportsBookTeamBets{
         val driver: ChromeDriver = ChromeDriver()
@@ -77,19 +79,35 @@ class DraftKingsService : SportsBookService{
     }
 
     override fun getCurrentNBASpreads(): SportsBookTeamBets{
-        return this.getCurrentBets(nbaUrl, TeamBetType.Spread)
+        return this.getCurrentBets(NBA_URL, TeamBetType.Spread)
     }
     override fun getCurrentNBAOverUnders(): SportsBookTeamBets {
-        return this.getCurrentBets(nbaUrl, TeamBetType.OverUnder)
+        return this.getCurrentBets(NBA_URL, TeamBetType.OverUnder)
     }
 
     override fun getCurrentNBAMoneyLines(): SportsBookTeamBets {
-        return this.getCurrentBets(nbaUrl, TeamBetType.MoneyLine)
+        return this.getCurrentBets(NBA_URL, TeamBetType.MoneyLine)
     }
     override fun getCurrentNHLSpreads(): SportsBookTeamBets{
-        return this.getCurrentBets("https://sportsbook.draftkings.com/leagues/hockey/nhl",TeamBetType.Spread)
+        return this.getCurrentBets(NHL_URL,TeamBetType.Spread)
+    }
+
+    override fun getCurrentNHLOverUnders(): SportsBookTeamBets {
+        return this.getCurrentBets(NHL_URL, TeamBetType.OverUnder)
+    }
+
+    override fun getCurrentNHLMoneyLines(): SportsBookTeamBets {
+        return this.getCurrentBets(NHL_URL, TeamBetType.MoneyLine)
     }
     override fun getCurrentNCAAMSpreads():SportsBookTeamBets{
-        return this.getCurrentBets("https://sportsbook.draftkings.com/leagues/basketball/ncaab",TeamBetType.Spread)
+        return this.getCurrentBets(NCAAM_URL,TeamBetType.Spread)
+    }
+
+    override fun getCurrentNCAAMOverUnders(): SportsBookTeamBets {
+        return this.getCurrentBets(NCAAM_URL,TeamBetType.OverUnder)
+    }
+
+    override fun getCurrentNCAAMMoneyLines(): SportsBookTeamBets {
+        return this.getCurrentBets(NCAAM_URL,TeamBetType.MoneyLine)
     }
 }
