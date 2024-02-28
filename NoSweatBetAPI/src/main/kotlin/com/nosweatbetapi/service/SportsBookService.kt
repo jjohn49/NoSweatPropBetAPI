@@ -8,7 +8,14 @@ interface SportsBookService {
     fun getCurrentNBASpreads():SportsBookTeamBets
     fun getCurrentNBAOverUnders():SportsBookTeamBets
 
+    fun getCurrentNBAMoneyLines():SportsBookTeamBets
+
     fun getCurrentNHLSpreads():SportsBookTeamBets
+    fun getCurrentNHLOverUnders():SportsBookTeamBets
+    fun getCurrentNHLMoneyLines():SportsBookTeamBets
+
 
     fun getCurrentNCAAMSpreads():SportsBookTeamBets
+    fun getCurrentNCAAMOverUnders():SportsBookTeamBets
+    fun getCurrentNCAAMMoneyLines():SportsBookTeamBets
 }

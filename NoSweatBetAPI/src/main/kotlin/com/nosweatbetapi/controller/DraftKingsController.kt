@@ -13,8 +13,18 @@ class DraftKingsController {
     val service: DraftKingsService = DraftKingsService()
 
     @GetMapping("league/nba/spread/current")
-    fun currentNBASpreads(): SportsBookTeamBets{
+    fun getCurrentNBASpreads(): SportsBookTeamBets{
         return service.getCurrentNBASpreads()
+    }
+
+    @GetMapping("league/nba/overunder/current")
+    fun getCurrentNBAOverUnder(): SportsBookTeamBets{
+        return service.getCurrentNBAOverUnders()
+    }
+
+    @GetMapping("league/nba/moneyline/current")
+    fun getCurrentNBAMoneyLine():SportsBookTeamBets{
+        return service.getCurrentNBAMoneyLines()
     }
 
     @GetMapping("league/nhl/spread/current")
