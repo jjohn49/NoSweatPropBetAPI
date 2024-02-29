@@ -59,9 +59,9 @@ class DraftKingsService : SportsBookService{
 
             try {
                 if(type!=TeamBetType.OverUnder){
-                    bets.add(TeamBet(if (isTeam1Favorite) team1 else team2, if (isTeam1Favorite) team2 else team1, type, pointSpread, if (isTeam1Favorite) team1Odds else team2Odds, if (isTeam1Favorite) team2Odds else team1Odds))
+                    bets.add(TeamBet(if (isTeam1Favorite) team1 else team2, if (isTeam1Favorite) team2 else team1,  true, type =  type, line =  pointSpread, team1Odds =  if (isTeam1Favorite) team1Odds else team2Odds, team2Odds = if (isTeam1Favorite) team2Odds else team1Odds))
                 }else{
-                    bets.add(TeamBet(team1, team2, type, pointSpread, overOdds = team1Odds, underOdds = team2Odds))
+                    bets.add(TeamBet(team1, team2, isTeam1Favorite, type, pointSpread, overOdds = team1Odds, underOdds = team2Odds))
                 }
 
 
