@@ -2,8 +2,8 @@ package com.nosweatbetapi.service
 
 
 import com.nosweatbetapi.model.SportsBookTeamBets
-import com.nosweatbetapi.model.TeamBet
-import com.nosweatbetapi.model.TeamBetType
+import com.nosweatbetapi.model.GameBet
+import com.nosweatbetapi.model.GameBetType
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
@@ -20,7 +20,7 @@ class DraftKingsService : SportsBookService{
     val NHL_URL: String = "https://sportsbook.draftkings.com/leagues/hockey/nhl"
     val NCAAM_URL:String = "https://sportsbook.draftkings.com/leagues/basketball/ncaab"
 
-    private fun getCurrentBets(url: String, type: TeamBetType): SportsBookTeamBets{
+    private fun getCurrentBets(url: String, type: GameBetType): SportsBookTeamBets{
         val driver: ChromeDriver = ChromeDriver()
         driver.get(url)
 
@@ -29,24 +29,24 @@ class DraftKingsService : SportsBookService{
 
         val teams = sportsbookTable.findElements(By.tagName("tr"))
 
-        val bets: MutableList<TeamBet> = scrapeBets(type, teams)
+        val bets: MutableList<GameBet> = scrapeBets(type, teams)
 
         driver.close()
         return SportsBookTeamBets(name, bets)
     }
 
-    private fun scrapeBets(type: TeamBetType,teams: MutableList<WebElement>): MutableList<TeamBet> {
+    private fun scrapeBets(type: GameBetType, teams: MutableList<WebElement>): MutableList<GameBet> {
         val position: Int = type.ordinal
-        val bets: MutableList<TeamBet> = mutableListOf()
+        val bets: MutableList<GameBet> = mutableListOf()
         for (i in teams.indices step 2) {
             val team1: String = teams[i].findElement(By.className("event-cell__name-text")).text
             val team1OddsText: String = teams[i].findElements(By.className("sportsbook-odds")).get(position).text
             val team1Odds: Int = if (team1OddsText.get(0).compareTo('-') == 1) team1OddsText.removeRange(0, 1).toInt() * -1 else team1OddsText.removeRange(0, 1).toInt()
 
-            val pointSpreadText: String = if(type != TeamBetType.MoneyLine) teams[i].findElements(By.className("sportsbook-outcome-cell__line")).get(position).text else "pk"
+            val pointSpreadText: String = if(type != GameBetType.MoneyLine) teams[i].findElements(By.className("sportsbook-outcome-cell__line")).get(position).text else "pk"
 
             val pointSpread: Float
-            if(type != TeamBetType.OverUnder)
+            if(type != GameBetType.OverUnder)
                 pointSpread = if (pointSpreadText != "pk") pointSpreadText.removeRange(0, 1).toFloat() else 0f
             else{
                 pointSpread = pointSpreadText.toFloat()
@@ -58,10 +58,10 @@ class DraftKingsService : SportsBookService{
             val team2Odds: Int = if (team2OddsText.get(0).compareTo('-') == 1) team2OddsText.removeRange(0, 1).toInt() * -1 else team2OddsText.removeRange(0, 1).toInt()
 
             try {
-                if(type!=TeamBetType.OverUnder){
-                    bets.add(TeamBet(if (isTeam1Favorite) team1 else team2, if (isTeam1Favorite) team2 else team1,  true, type =  type, line =  pointSpread, team1Odds =  if (isTeam1Favorite) team1Odds else team2Odds, team2Odds = if (isTeam1Favorite) team2Odds else team1Odds))
+                if(type!=GameBetType.OverUnder){
+                    bets.add(GameBet(name, if (isTeam1Favorite) team1 else team2, if (isTeam1Favorite) team2 else team1,  true, type =  type, line =  pointSpread, team1Odds =  if (isTeam1Favorite) team1Odds else team2Odds, team2Odds = if (isTeam1Favorite) team2Odds else team1Odds))
                 }else{
-                    bets.add(TeamBet(team1, team2, isTeam1Favorite, type, pointSpread, overOdds = team1Odds, underOdds = team2Odds))
+                    bets.add(GameBet(name,team1, team2, isTeam1Favorite, type, pointSpread, overOdds = team1Odds, underOdds = team2Odds))
                 }
 
 
@@ -79,35 +79,35 @@ class DraftKingsService : SportsBookService{
     }
 
     override fun getCurrentNBASpreads(): SportsBookTeamBets{
-        return this.getCurrentBets(NBA_URL, TeamBetType.Spread)
+        return this.getCurrentBets(NBA_URL, GameBetType.Spread)
     }
     override fun getCurrentNBAOverUnders(): SportsBookTeamBets {
-        return this.getCurrentBets(NBA_URL, TeamBetType.OverUnder)
+        return this.getCurrentBets(NBA_URL, GameBetType.OverUnder)
     }
 
     override fun getCurrentNBAMoneyLines(): SportsBookTeamBets {
-        return this.getCurrentBets(NBA_URL, TeamBetType.MoneyLine)
+        return this.getCurrentBets(NBA_URL, GameBetType.MoneyLine)
     }
     override fun getCurrentNHLSpreads(): SportsBookTeamBets{
-        return this.getCurrentBets(NHL_URL,TeamBetType.Spread)
+        return this.getCurrentBets(NHL_URL,GameBetType.Spread)
     }
 
     override fun getCurrentNHLOverUnders(): SportsBookTeamBets {
-        return this.getCurrentBets(NHL_URL, TeamBetType.OverUnder)
+        return this.getCurrentBets(NHL_URL, GameBetType.OverUnder)
     }
 
     override fun getCurrentNHLMoneyLines(): SportsBookTeamBets {
-        return this.getCurrentBets(NHL_URL, TeamBetType.MoneyLine)
+        return this.getCurrentBets(NHL_URL, GameBetType.MoneyLine)
     }
     override fun getCurrentNCAAMSpreads():SportsBookTeamBets{
-        return this.getCurrentBets(NCAAM_URL,TeamBetType.Spread)
+        return this.getCurrentBets(NCAAM_URL,GameBetType.Spread)
     }
 
     override fun getCurrentNCAAMOverUnders(): SportsBookTeamBets {
-        return this.getCurrentBets(NCAAM_URL,TeamBetType.OverUnder)
+        return this.getCurrentBets(NCAAM_URL,GameBetType.OverUnder)
     }
 
     override fun getCurrentNCAAMMoneyLines(): SportsBookTeamBets {
-        return this.getCurrentBets(NCAAM_URL,TeamBetType.MoneyLine)
+        return this.getCurrentBets(NCAAM_URL,GameBetType.MoneyLine)
     }
 }
