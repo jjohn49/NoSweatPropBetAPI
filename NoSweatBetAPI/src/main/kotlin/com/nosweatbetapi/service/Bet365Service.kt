@@ -3,31 +3,45 @@ package com.nosweatbetapi.service
 import com.nosweatbetapi.model.GameBet
 import com.nosweatbetapi.model.GameBetType
 import com.nosweatbetapi.model.SportsBookTeamBets
+
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.chrome.ChromeDriver
+//import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+//import org.openqa.selenium.firefox.FirefoxDriver
+import java.time.Duration
+
 
 class Bet365Service: SportsBookService {
     override val name: String
         get() = "Bet365"
 
+    val NBA_URL = "https://www.nj.bet365.com/?_h=kTPmHjL5DwBru7SKcU_eAA%3D%3D#/AC/B18/C20604387/D48/E1453/F10/"
+
     fun getCurrentBets(url: String, type: GameBetType): MutableList<GameBet>{
-        val bets: MutableList<GameBet> = mutableListOf()
-        val driver: ChromeDriver = ChromeDriver()
+
+
+        val chromeOptions: ChromeOptions = ChromeOptions()
+        chromeOptions.addArguments("--window-size=1920,1080")
+        chromeOptions.addArguments("--headless=new")
+
+        val driver = ChromeDriver()
         driver.get(url)
+
+        //Need to wait because MGM sucks and is slooooooowwwwwww
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(12))
 
         val betTable = driver.findElement(By.className("gl-MarketGroupContainer"))
 
-        scrapeBets(betTable, type)
-
-
+        val bets = scrapeBets(betTable, type)
 
         driver.close()
 
         return bets
     }
 
-    private fun scrapeBets(betTable: WebElement, type: GameBetType) {
+    private fun scrapeBets(betTable: WebElement, type: GameBetType): MutableList<GameBet> {
         val bets: MutableList<GameBet> = mutableListOf()
         val position:Int = type.ordinal
         val teamsCol = betTable.findElement(By.className("sgl-MarketFixtureDetailsLabel"))
@@ -43,23 +57,37 @@ class Bet365Service: SportsBookService {
         val spreads = spreadCol.findElements(By.className("sac-ParticipantCenteredStacked50OTB"))
 
         for (i in 0..<teams.count()) {
-            val teamsInGame =
-                teams.get(i).findElements(By.className("scb-ParticipantFixtureDetailsHigherBasketball_Team"))
 
-            //If moneyline this should be empty
-            val lineInGame =  spreads.get(i).findElements(By.className("sac-ParticipantCenteredStacked50OTB_Handicap"))
-            val odds = spreads.get(i).findElements(By.className("sac-ParticipantCenteredStacked50OTB_Odds"))
+            try{
+                val teamsInGame =
+                    teams.get(i).findElements(By.className("scb-ParticipantFixtureDetailsHigherBasketball_Team"))
 
-            if(type == GameBetType.Spread){
-                bets.add(GameBet(name, teams.get(0).text, teams.get(1).text, true, type, lineInGame.get(0).text.removeRange(0,1).toFloat()))
+                //If moneyline this should be empty
+                val lineInGame =  spreads.get(i).findElements(By.className("sac-ParticipantCenteredStacked50OTB_Handicap"))
+                val odds = spreads.get(i).findElements(By.className("sac-ParticipantCenteredStacked50OTB_Odds"))
+
+                if(type == GameBetType.Spread){
+                    bets.add(GameBet(name, teams.get(0).text, teams.get(1).text, true, type, lineInGame.get(0).text.removeRange(0,1).toFloat()))
+                }else if (type == GameBetType.OverUnder){
+                    val overOdds = if(odds.get(0).text.get(0)=='-') odds.get(0).text.removeRange(0,1).toInt() * -1 else odds.get(0).text.removeRange(0,1).toInt()
+                    val underOdds = if(odds.get(1).text.get(1)=='-') odds.get(1).text.removeRange(0,1).toInt() * -1 else odds.get(1).text.removeRange(0,1).toInt()
+                    bets.add(GameBet(name, teams.get(0).text, teams.get(1).text,false,type, lineInGame.get(0).text.removeRange(0,1).toFloat(), overOdds = overOdds, underOdds = underOdds))
+                }else if(type == GameBetType.MoneyLine){
+                    println("To Busy to do this rn")
+                }
+            }catch (e: Exception){
+                println("Failed to scrape a bet.  Continuing to the Next.")
             }
 
+
         }
+
+        return bets
     }
 
 
     override fun getCurrentNBASpreads(): SportsBookTeamBets {
-        TODO("Not yet implemented")
+        return SportsBookTeamBets(name, this.getCurrentBets(NBA_URL, GameBetType.Spread))
     }
 
     override fun getCurrentNBAOverUnders(): SportsBookTeamBets {

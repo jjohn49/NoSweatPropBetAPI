@@ -16,10 +16,19 @@ java {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    implementation("org.seleniumhq.selenium:selenium-java:4.5.0")
+
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    implementation("org.seleniumhq.selenium:selenium-java:4.18.1")
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-chrome-driver
+    implementation ("org.seleniumhq.selenium:selenium-chrome-driver:4.18.1")
+    // https://mvnrepository.com/artifact/com.alibaba/fastjson
+    implementation("com.alibaba:fastjson:2.0.47")
+
+    //implementation(files("main/resources/UndetectedChromedriver-21.0-SNAPSHOT.jar"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -30,7 +39,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "21"
+        jvmTarget = JavaVersion.VERSION_21.toString()
 
     }
 }
